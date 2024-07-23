@@ -2,7 +2,8 @@ import React from "react";
 import { Link } from "react-router-dom";
 import Button from "@mui/material/Button";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { logIn, logOut } from "../../Redux/Slices/LoginSlice";
 
 const Logo = () => {
   return (
@@ -15,6 +16,11 @@ const Logo = () => {
 
 const Header = () => {
   const items = useSelector((store) => store.cart.items);
+
+  const loggedIn = useSelector((store) => store.login.loggedIn);
+  console.log(loggedIn);
+
+  const dispatch = useDispatch();
 
   return (
     <div className="flex flex-wrap justify-between mt-2 border-t-2 border-b-2 p-2">
@@ -44,12 +50,19 @@ const Header = () => {
         </li>
       </ul>
       <div className="flex">
-        <div className="m-2">
-          <Button variant="contained">LogIn</Button>
-        </div>
-        {/* <div className="m-2">
-          <Button variant="contained">LogOut</Button>
-        </div> */}
+        {loggedIn ? (
+          <div className="m-2">
+            <Button variant="contained" onClick={() => dispatch(logOut())}>
+              LogOut
+            </Button>
+          </div>
+        ) : (
+          <div className="m-2">
+            <Button variant="contained" onClick={() => dispatch(logIn())}>
+              LogIn
+            </Button>
+          </div>
+        )}
       </div>
     </div>
   );
