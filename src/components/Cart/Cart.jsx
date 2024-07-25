@@ -5,7 +5,6 @@ import { Link } from "react-router-dom";
 
 const Cart = () => {
   const items = useSelector((state) => state.cart.items);
-  console.log(items);
   return items.length == 0 ? (
     <div>
       <h1 className="text-3xl font-bold text-center mt-5">

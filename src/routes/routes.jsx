@@ -12,6 +12,7 @@ import store from "../Redux/Store";
 import SmallHeader from "../components/Header/SmallHeader";
 import Order from "../components/Order/Order";
 import Error from "../components/Error/Error";
+import Login from "../components/Login/Login";
 const AppLayout = () => {
   const isPhone = useMediaQuery("(max-width:600px)");
   return (
@@ -56,6 +57,10 @@ export const appRoutes = createBrowserRouter([
       {
         path: "/order",
         element: <Order />,
+      },
+      {
+        path: "/login",
+        element: <Login />,
       },
     ],
   },
