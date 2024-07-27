@@ -1,10 +1,11 @@
 import React from "react";
 import MenuIcon from "@mui/icons-material/Menu";
-import { Box, Button, colors } from "@mui/material";
+import { Box, Button } from "@mui/material";
 import Drawer from "@mui/material/Drawer";
 import { Link } from "react-router-dom";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { logIn } from "../../Redux/Slices/LoginSlice";
 
 const SmallHeader = () => {
   const [open, setOpen] = React.useState(false);
@@ -14,63 +15,92 @@ const SmallHeader = () => {
   };
   const items = useSelector((store) => store.cart.items);
 
+  const loggedIn = useSelector((store) => store.login.loggedIn);
+
+  const dispatch = useDispatch();
+
+  const logoutHandler = () => {
+    localStorage.removeItem("token");
+    dispatch(logIn());
+  };
+
   const Logo = () => {
     return (
-      <Link to="/" className="mx-2 font-bold text-4xl cursor-pointer">
-        <span style={{ color: "violet" }}>e</span>
-        <span style={{ color: "yellowgreen" }}>Aakarshan</span>
+      <Link to="/" className="mx-5 font-bold text-4xl cursor-pointer">
+        <span style={{ color: "violet" }}>eAaka</span>
+        <span style={{ color: "yellowgreen" }}>rshan</span>
       </Link>
     );
   };
 
   const DrawerList = (
-    <Box sx={{ width: 250 }} role="presentation" onClick={toggleDrawer(false)}>
+    <Box
+      className="flex flex-col "
+      sx={{ width: 230, height: "50vh" }}
+      role="presentation"
+      onClick={toggleDrawer(false)}
+    >
       <Logo />
-      <ul className="text-start text-3xl font-bold p-2 ">
-        <li className="m-2 ">
-          <Link className="hover:border-b-8" to="/">
-            Home
-          </Link>
+      <ul className="mx-2 text-3xl font-bold p-2 smallheader">
+        <li>
+          <Link to="/">Home</Link>
         </li>
 
-        <li className="m-2">
-          <Link className="hover:border-b-8" to="mens">
-            Mens
-          </Link>
+        <li>
+          <Link to="mens">Mens</Link>
         </li>
-        <li className="m-2">
-          <Link className="hover:border-b-8" to="/womens">
-            Womens
-          </Link>
+        <li>
+          <Link to="/womens">Womens</Link>
         </li>
-        <li className="m-2">
-          <Link className="hover:border-b-8" to="/jwellery">
-            Jwellery
-          </Link>
+        <li>
+          <Link to="/jwellery">Jwellery</Link>
         </li>
-        <li className="m-2">
-          <Link className="hover:border-b-8" to="/electronics">
-            Electronics
-          </Link>
+        <li>
+          <Link to="/electronics">Electronics</Link>
         </li>
-        <li className="m-2">
-          <Link to="/cart">
+        <li>
+          {/* <Link to="/cart">
             <ShoppingCartIcon sx={{ fontSize: "larger" }} />
             {items.length != 0 ? `-${items.length}` : ``}
-          </Link>
+          </Link> */}
         </li>
       </ul>
     </Box>
   );
 
   return (
-    <div>
-      <Button onClick={toggleDrawer(true)}>
-        <MenuIcon sx={{ color: "black", fontSize: "3rem" }} />
-      </Button>
-      <Drawer open={open} onClose={toggleDrawer(false)}>
-        {DrawerList}
-      </Drawer>
+    <div className="flex justify-between">
+      <div>
+        <Button onClick={toggleDrawer(true)}>
+          <MenuIcon sx={{ color: "black", fontSize: "3rem" }} />
+        </Button>
+        <Drawer open={open} onClose={toggleDrawer(false)}>
+          {DrawerList}
+        </Drawer>
+      </div>
+      <div className="flex">
+        <Link to="/cart" className="m-2 ">
+          <ShoppingCartIcon sx={{ fontSize: "5vh", color: "black" }} />
+          <span className="text-2xl font-bold ">
+            {items.length != 0 ? `${items.length}` : ``}
+          </span>
+        </Link>
+        <div>
+          {loggedIn ? (
+            <div className="m-2">
+              <Button variant="contained">
+                <Link to="/login">Login</Link>
+              </Button>
+            </div>
+          ) : (
+            <div className="m-2">
+              <Button variant="contained" onClick={logoutHandler}>
+                <Link>LogOut</Link>
+              </Button>
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   );
 };

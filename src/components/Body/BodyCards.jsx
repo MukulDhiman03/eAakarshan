@@ -92,10 +92,12 @@ const BodyCards = ({ data }) => {
           </Modal>
         </Typography>
         <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-          Price- Rs {data.price}
+          Price- $ {data.price}
         </Typography>
         <Typography variant="h6">Rating- {data.rating.rate}/5</Typography>
-        <Typography variant="h6">InStock- {data.rating.count}</Typography>
+        <Typography variant="h6">
+          Instock- {data.rating.count} /{data.rating.count + 100}
+        </Typography>
       </CardContent>
       <CardActions className="absolute bottom-0 w-full p-4 bg-gray-100">
         <Button

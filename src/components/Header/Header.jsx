@@ -8,8 +8,8 @@ import { logIn } from "../../Redux/Slices/LoginSlice";
 const Logo = () => {
   return (
     <Link to="/" className="mx-2 font-bold text-4xl cursor-pointer">
-      <span style={{ color: "violet" }}>e</span>
-      <span style={{ color: "yellowgreen" }}>Aakarshan</span>
+      <span style={{ color: "violet" }}>eAaka</span>
+      <span style={{ color: "yellowgreen" }}>rshan</span>
     </Link>
   );
 };
@@ -19,18 +19,17 @@ const Header = () => {
 
   const loggedIn = useSelector((store) => store.login.loggedIn);
 
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
 
   const logoutHandler = () => {
-    localStorage.removeItem("token")
-    dispatch(logIn())
-  }
-
+    localStorage.removeItem("token");
+    dispatch(logIn());
+  };
 
   return (
     <div className="flex flex-wrap justify-between mt-2 border-t-2 border-b-2 p-2">
       <Logo />
-      <ul className="flex flex-wrap text-3xl font-bold">
+      <ul className="flex flex-wrap text-3xl font-bold bigheader">
         <li className="m-2">
           <Link to="/">Home</Link>
         </li>
@@ -57,14 +56,14 @@ const Header = () => {
       <div className="flex">
         {loggedIn ? (
           <div className="m-2">
-            <Button variant="contained" >
+            <Button variant="contained">
               <Link to="/login">Login</Link>
             </Button>
           </div>
         ) : (
           <div className="m-2">
             <Button variant="contained" onClick={logoutHandler}>
-              <Link >LogOut</Link>
+              <Link>LogOut</Link>
             </Button>
           </div>
         )}

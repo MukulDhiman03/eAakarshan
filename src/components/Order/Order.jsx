@@ -9,10 +9,10 @@ const Order = () => {
       <div className="mt-3 text-center font-bold text-3xl">
         Place Your Order Here
       </div>
-      <div className="text-center font-bold text-4xl text-red-600">
+      <div className="text-center font-bold text-2xl text-red-600">
         {loggedIn
           ? "You Must Login First Before Placing Your Order"
-          : "............................................................."}
+          : "Something went wrong."}
       </div>
     </div>
   );

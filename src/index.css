@@ -1,3 +1,33 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+
+
+.bigheader li {
+    color: yellowgreen;
+    transition: color 0.3s ease, transform 0.3s ease;
+}
+
+.bigheader li:hover {
+    color: violet;
+    transform: scale(1.1);
+    cursor: pointer;
+}
+
+/* small header */
+.smallheader {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.smallheader li {
+    color: yellowgreen;
+    margin-top: 30%;
+}
+
+.smallheader li:hover {
+    color: violet;
+
+}
