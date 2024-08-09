@@ -2,8 +2,9 @@ import React from "react";
 import { Link } from "react-router-dom";
 import Button from "@mui/material/Button";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
-import { useDispatch, useSelector } from "react-redux";
-import { logIn } from "../../Redux/Slices/LoginSlice";
+import { useSelector } from "react-redux";
+import { signOut } from "firebase/auth";
+import { auth } from "../../utils/Firebase";
 
 const Logo = () => {
   return (
@@ -16,14 +17,12 @@ const Logo = () => {
 
 const Header = () => {
   const items = useSelector((store) => store.cart.items);
+  const user = useSelector((store) => store.user);
 
-  const loggedIn = useSelector((store) => store.login.loggedIn);
-
-  const dispatch = useDispatch();
-
-  const logoutHandler = () => {
-    localStorage.removeItem("token");
-    dispatch(logIn());
+  const logOutHandler = () => {
+    signOut(auth)
+      .then(() => {})
+      .catch((error) => {});
   };
 
   return (
@@ -54,16 +53,16 @@ const Header = () => {
         </li>
       </ul>
       <div className="flex">
-        {loggedIn ? (
+        {user ? (
           <div className="m-2">
-            <Button variant="contained">
-              <Link to="/login">Login</Link>
+            <Button variant="contained" onClick={logOutHandler}>
+              <Link>LogOut</Link>
             </Button>
           </div>
         ) : (
           <div className="m-2">
-            <Button variant="contained" onClick={logoutHandler}>
-              <Link>LogOut</Link>
+            <Button variant="contained">
+              <Link to="/login">Login</Link>
             </Button>
           </div>
         )}

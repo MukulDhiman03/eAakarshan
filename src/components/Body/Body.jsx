@@ -1,10 +1,15 @@
 import React, { useEffect, useState } from "react";
 import BodyCards from "./BodyCards";
 import Shimmer from "../Shimmer/Shimmer";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "../../utils/Firebase";
+import { useDispatch } from "react-redux";
+import { addUser, removeUser } from "../../Redux/Slices/UserSlice";
 
 const Body = () => {
   const [allProducts, setAllProducts] = useState([]);
   const [status, setStatus] = useState(true);
+  const dispatch = useDispatch();
 
   const getData = async () => {
     const res = await fetch("https://fakestoreapi.com/products");
@@ -23,6 +28,20 @@ const Body = () => {
       window.removeEventListener("online", handleOnline);
       window.removeEventListener("offline", handleOffline);
     };
+  }, []);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        // const uid = user.uid;
+        const { uid, email, displayName, photoURL } = user;
+        dispatch(addUser({ uid, email, displayName, photoURL }));
+      } else {
+        dispatch(removeUser());
+      }
+    });
+
+    return () => unsubscribe();
   }, []);
 
   useEffect(() => {

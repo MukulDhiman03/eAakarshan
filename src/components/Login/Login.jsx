@@ -1,36 +1,37 @@
 import { Card, CardContent, Typography } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
 import InputAdornment from "@mui/material/InputAdornment";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
-import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
-import { useNavigate } from "react-router-dom";
-import { logOut } from "../../Redux/Slices/LoginSlice";
-import { useDispatch } from "react-redux";
 import { useMediaQuery } from "@mui/material";
+import { checkValidData } from "../../utils/Validate";
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+} from "firebase/auth";
+import { auth } from "../../utils/Firebase";
+import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { addUser } from "../../Redux/Slices/UserSlice";
 
 const Login = () => {
   const [username, setUsername] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [password, setPassword] = useState("");
-
-  // const [widthChange, setWidth] = useState("");
-
-  // window.addEventListener("resize", () => {
-  //   console.log(window.innerWidth);
-  //   setWidth(window.innerWidth);
-  // });
-
+  const [email, setEmail] = useState("");
   const [usernameError, setUsernameError] = useState(false);
   const [passwordError, setPasswordError] = useState(false);
+  const [emailError, setEmailError] = useState(false);
+  const [error, setError] = useState("");
 
-  const navigate = useNavigate();
+  const [signUpToggler, setSignUpToggler] = useState(false);
+
   const dispatch = useDispatch();
-
+  const navigate = useNavigate();
   const isMobile = useMediaQuery("(max-width:600px)");
   const isTablet = useMediaQuery("(min-width:601px) and (max-width:1024px)");
 
@@ -47,43 +48,47 @@ const Login = () => {
     setUsername(e.target.value);
     setUsernameError(false);
   };
+  const handleEmailChange = (e) => {
+    setEmail(e.target.value);
+    setEmailError(false);
+  };
 
-  const handleSubmit = async () => {
-    if (username === "") {
-      setUsernameError(true);
-      return;
-    }
-    if (password === "") {
-      setPasswordError(true);
-      return;
+  const clickHandler = () => {
+    if (emailError || passwordError || usernameError) return;
+    const message = checkValidData(email, password, username);
+    setError(message);
+
+    if (message) return;
+
+    if (signUpToggler) {
+      // register user with email and password
+      createUserWithEmailAndPassword(auth, email, password)
+        .then(() => {
+          const { uid, email, displayName } = auth.currentUser;
+
+          dispatch(addUser({ uid, email, displayName }));
+          navigate("/");
+        })
+        .catch((error) => {
+          const errorMessage = error.message;
+          setError(errorMessage);
+        });
+    } else {
+      //log in
+      signInWithEmailAndPassword(auth, email, password)
+        .then(() => {
+          // Signed in
+          navigate("/");
+        })
+        .catch((error) => {
+          const errorMessage = error.message;
+          setError(errorMessage);
+        });
     }
 
-    // api call for handling the authentication
-    try {
-      const formData = {
-        username: username,
-        password: password,
-      };
-      const res = await axios.post(
-        "https://fakestoreapi.com/auth/login",
-        formData
-      );
-      if (res.status === 200) {
-        // toast.success("Successfully logged in");
-        let token = res.data.token;
-        localStorage.setItem("token", token);
-        dispatch(logOut());
-        navigate("/");
-      } else {
-        toast.warn("Check your credentials");
-      }
-    } catch (error) {
-      toast.error("Check your credentials");
-    }
-
-    // reset the states to empty after submission
     setUsername("");
     setPassword("");
+    setEmail("");
   };
 
   return (
@@ -103,18 +108,33 @@ const Login = () => {
           <Typography
             sx={{ fontSize: 20, fontWeight: "bolder", margin: "4px" }}
           >
-            Login Here To Place Your Order
+            {signUpToggler
+              ? "Sign Up To Place Your Order"
+              : "Log In Here To Place Your Order"}
           </Typography>
+          {signUpToggler && (
+            <TextField
+              id="outlined-basic"
+              label="User Name"
+              variant="outlined"
+              sx={{ margin: "4px" }}
+              fullWidth
+              value={username}
+              onChange={handleUsernameChange}
+              error={usernameError}
+              helperText={usernameError ? "Username is required" : ""}
+            />
+          )}
           <TextField
             id="outlined-basic"
-            label="User Name"
+            label="Email Id"
             variant="outlined"
             sx={{ margin: "4px" }}
             fullWidth
-            value={username}
-            onChange={handleUsernameChange}
-            error={usernameError}
-            helperText={usernameError ? "Username is required" : ""}
+            value={email}
+            onChange={handleEmailChange}
+            error={emailError}
+            helperText={emailError ? "Email is required" : ""}
           />
           <TextField
             id="outlined-password-input"
@@ -141,20 +161,29 @@ const Login = () => {
               ),
             }}
           />
-          <Button
-            variant="contained"
-            sx={{ margin: "4px" }}
-            onClick={handleSubmit}
-          >
-            Login
-          </Button>
+          <p style={{ color: "red", margin: "2px", fontWeight: "bold" }}>
+            {error}
+          </p>
         </CardContent>
+
+        <Button variant="contained" onClick={clickHandler}>
+          {signUpToggler ? "Sign Up" : "Log In"}
+        </Button>
+        <p
+          style={{
+            color: "blue",
+            cursor: "pointer",
+            fontWeight: "bolder",
+            marginTop: "5px",
+          }}
+          onClick={() => setSignUpToggler(!signUpToggler)}
+        >
+          {signUpToggler
+            ? "Already Registered ? Log In Now"
+            : "Not Registered Yet ? Sign Up Now"}
+        </p>
         <ToastContainer />
       </Card>
-
-      {/* <div className="text-center mt-4">
-        <Button variant="contained">Click Here To Generate Credentials</Button>
-      </div> */}
     </div>
   );
 };

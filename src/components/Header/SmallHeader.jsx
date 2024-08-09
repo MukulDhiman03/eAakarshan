@@ -4,8 +4,7 @@ import { Box, Button } from "@mui/material";
 import Drawer from "@mui/material/Drawer";
 import { Link } from "react-router-dom";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
-import { useDispatch, useSelector } from "react-redux";
-import { logIn } from "../../Redux/Slices/LoginSlice";
+import { useSelector } from "react-redux";
 
 const SmallHeader = () => {
   const [open, setOpen] = React.useState(false);
@@ -15,14 +14,7 @@ const SmallHeader = () => {
   };
   const items = useSelector((store) => store.cart.items);
 
-  const loggedIn = useSelector((store) => store.login.loggedIn);
-
-  const dispatch = useDispatch();
-
-  const logoutHandler = () => {
-    localStorage.removeItem("token");
-    dispatch(logIn());
-  };
+  const user = useSelector((store) => store.user);
 
   const Logo = () => {
     return (
@@ -86,16 +78,16 @@ const SmallHeader = () => {
           </span>
         </Link>
         <div>
-          {loggedIn ? (
+          {user ? (
             <div className="m-2">
-              <Button variant="contained">
-                <Link to="/login">Login</Link>
+              <Button variant="contained" onClick={logOutHandler}>
+                <Link>LogOut</Link>
               </Button>
             </div>
           ) : (
             <div className="m-2">
-              <Button variant="contained" onClick={logoutHandler}>
-                <Link>LogOut</Link>
+              <Button variant="contained">
+                <Link to="/login">Login</Link>
               </Button>
             </div>
           )}
